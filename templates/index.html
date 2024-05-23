@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sentiment Analysis Chatbot</title>
+    <!-- Import Google Icon Font -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Import materialize.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Import jQuery before materialize.js -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <style>
+        .chatbox {
+            height: 400px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            overflow-y: scroll;
+        }
+        .user-message {
+            text-align: right;
+            color: blue;
+        }
+        .bot-message {
+            text-align: left;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="center-align">Sentiment Analysis Chatbot</h1>
+        <div id="chatbox" class="chatbox">
+            <!-- Chat messages will be added here -->
+        </div>
+        <form id="myForm">
+            <div class="input-field">
+                <input id="text" type="text" class="validate">
+                <label for="text">Enter text:</label>
+            </div>
+            <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+                <i class="material-icons right">send</i>
+            </button>
+        </form>
+    </div>
+    <script>
+    $(document).ready(function(){
+        $('#myForm').on('submit', function(e){
+            e.preventDefault();
+            var userText = $('#text').val();
+            $('#chatbox').append('<p class="user-message">' + userText + '</p>');
+            $.ajax({
+                url: '/predict',
+                type: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify({'text': userText}),
+                success: function(response){
+                    var botText = 'The predicted sentiment is: ' + response.prediction;
+                    $('#chatbox').append('<p class="bot-message">' + botText + '</p>');
+                    $('#chatbox').scrollTop($('#chatbox')[0].scrollHeight);
+                }
+            });
+            $('#text').val('');
+        });
+    });
+    </script>
+</body>
+</html>
